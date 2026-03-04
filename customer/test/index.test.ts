@@ -13,7 +13,7 @@ describe('Commitment creation', () => {
 
   it('should be able to create a poseidon2 commitment from input', async () => {
     const data: CreateCommitmentOptions = {
-      customerId: 1,
+      customerId: 0,
       evmAddress: 0n,
       policy: {
         id: 0,
@@ -24,7 +24,7 @@ describe('Commitment creation', () => {
           }
         }
       },
-      secret: BigInt(Fr.random().toString())
+      secret: 0n
     }
 
     const expectedCommitment = await bb.poseidon2Hash([

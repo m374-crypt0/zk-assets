@@ -1,4 +1,4 @@
-import compiledCircuit from "../target/rwa_eligibility_v1_hold_asset.json"
+import compiledCircuit from "target/rwa_eligibility_v1_hold_asset.json"
 
 import { UltraHonkBackend } from "@aztec/bb.js"
 
