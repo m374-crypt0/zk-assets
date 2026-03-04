@@ -2,15 +2,20 @@ import { beforeEach, describe, expect, it } from 'bun:test'
 import { testClient } from 'hono/testing'
 import { LocalOnChainSigner, type PrivateKey } from 'src/blockchain/localOnChainSigner'
 import customers from 'src/handlers/customers'
-import { inMemoryCustomerRepository, clearRepository } from 'src/repositories/inMemoryCustomerRepository'
+import { clearRepository, inMemoryCustomerRepository } from 'src/repositories/inMemoryCustomerRepository'
 import { inMemoryPolicyRepository } from 'src/repositories/inMemoryPolicyRepository'
 import { thirtyDaysLaterFromEpochInSeconds } from 'src/utility/time'
 
 const should = '<integration> should'
 
 describe('Customer compliancy recording', () => {
+  const tcg = testCommitmentGenerator()
 
-  beforeEach(clearRepository)
+  const getNextCommitment = () => tcg.next().value
+
+  beforeEach(() => {
+    clearRepository
+  })
 
   it(`${should} fail if the signer is not the issuer`, async () => {
     const wrongLocalChainSigner = new LocalOnChainSigner(process.env['TEST_PRIVATE_KEY_02'] as PrivateKey)
@@ -28,11 +33,14 @@ describe('Customer compliancy recording', () => {
         customerId: 0,
         policy: {
           id: 0,
-          parameters: {
-            validUntil: thirtyDaysLaterFromEpochInSeconds() - 1
+          scope: {
+            id: 0,
+            parameters: {
+              validUntil: thirtyDaysLaterFromEpochInSeconds() - 1
+            }
           }
         },
-        commitment: '0x0123456789abcdef'
+        commitment: getNextCommitment()
       }
     })
 
@@ -52,11 +60,14 @@ describe('Customer compliancy recording', () => {
         customerId: 0,
         policy: {
           id: 0,
-          parameters: {
-            validUntil: thirtyDaysLaterFromEpochInSeconds() - 1
+          scope: {
+            id: 0,
+            parameters: {
+              validUntil: thirtyDaysLaterFromEpochInSeconds() - 1
+            }
           }
         },
-        commitment: '0x0123456789abcdef'
+        commitment: getNextCommitment()
       }
     })
 
@@ -71,16 +82,21 @@ describe('Customer compliancy recording', () => {
 
     createTestCustomerInRepository()
 
+    const commitment = getNextCommitment()
+
     await client.recordCompliancy.$post({
       json: {
         customerId: 0,
         policy: {
           id: 0,
-          parameters: {
-            validUntil: thirtyDaysLaterFromEpochInSeconds() - 1
+          scope: {
+            id: 0,
+            parameters: {
+              validUntil: thirtyDaysLaterFromEpochInSeconds() - 1
+            }
           }
         },
-        commitment: '0x0123456789abcdef'
+        commitment
       }
     })
 
@@ -89,11 +105,14 @@ describe('Customer compliancy recording', () => {
         customerId: 0,
         policy: {
           id: 0,
-          parameters: {
-            validUntil: thirtyDaysLaterFromEpochInSeconds() - 1
+          scope: {
+            id: 0,
+            parameters: {
+              validUntil: thirtyDaysLaterFromEpochInSeconds() - 1
+            }
           }
         },
-        commitment: '0x0123456789abcdef'
+        commitment
       }
     })
 
@@ -112,4 +131,11 @@ function createTestCustomerInRepository() {
     lastName: 'a',
     email: 'a@a.a'
   })
+}
+
+function* testCommitmentGenerator(): Generator<string, string, unknown> {
+  let value = 0
+
+  while (true)
+    yield '0x' + `0000000000000000000000000000000000000000000000000000000000000000${Number(value++).toString(16)}`.slice(-64)
 }

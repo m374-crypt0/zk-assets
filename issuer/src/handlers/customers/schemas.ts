@@ -18,23 +18,36 @@ export const recordCompliancyQueryParamsSchema = z.object({
           description: 'The identifier of an existing policy',
           example: 0
         }),
-      parameters: policyParametersSchema
+      scope: z
+        .object({
+          id: z
+            .number()
+            .min(0)
+            .openapi({
+              description: 'The identifier of the policy scope',
+              example: 0
+            })
+          ,
+          parameters: policyParametersSchema
+        })
     })
     .openapi({
       description: 'The policy and its parameters'
     }),
   commitment: z
     .string()
+    .regex(/^0x[0-9A-F]{64}$/i)
     .nonempty()
     .openapi({
       description: `A commitment, computed by the client and recorded on-chain
  given he customer is eligible regarding the policy. The value of this
  commitment is verified on-chain before store, to ensure it is
- cryptographically correct`
+ cryptographically correct and not already stored`
     })
 })
   .openapi({
-    description: 'Parameters needed to ensure a customer is compliant regarding a policy'
+    description: `Parameters needed to ensure a customer is compliant regarding a policy.
+ A valid commitment must be provided for on-chain storage`
   })
 
 

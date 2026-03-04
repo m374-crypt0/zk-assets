@@ -42,10 +42,10 @@ export default new OpenAPIHono<CustomerEnv>()
       if (policy === undefined)
         return c.json({ error: 'This policy does not exist' }, 400)
 
-      if (!policy.validateParameters(params.policy.parameters))
+      if (!policy.validateParameters(params.policy.scope.parameters))
         return c.json({ error: 'Bad policy parameters' }, 400)
 
-      if (!policy.validateParameterValues(params.policy.parameters))
+      if (!policy.validateParameterValues(params.policy.scope.parameters))
         return c.json({ error: 'Bad policy parameter values' }, 400)
 
       let result: string

@@ -8,6 +8,8 @@ import { MockedOnChainSigner } from './mock/mockedOnChainSigner'
 
 const should = '<unit> should'
 
+const ZERO_COMMITMENT = '0x0000000000000000000000000000000000000000000000000000000000000000'
+
 describe('Customers compliancy recording', () => {
   const succeedingOnChainSigner = new MockedOnChainSigner(true)
 
@@ -26,10 +28,12 @@ describe('Customers compliancy recording', () => {
         customerId: 0,
         policy: {
           id: 0,
-          parameters: {
+          scope: {
+            id: 0,
+            parameters: {}
           }
         },
-        commitment: '0'
+        commitment: ZERO_COMMITMENT
       }
     })
 
@@ -47,9 +51,12 @@ describe('Customers compliancy recording', () => {
         customerId: 0,
         policy: {
           id: 1,
-          parameters: {}
+          scope: {
+            id: 0,
+            parameters: {}
+          }
         },
-        commitment: '0'
+        commitment: ZERO_COMMITMENT
       }
     })
 
@@ -114,6 +121,7 @@ describe('Customers compliancy recording', () => {
       policyRepository: inMemoryPolicyRepository,
       isTesting: true
     })
+
     createTestCustomerInRepository()
 
     const body = createExistingPolicyParameters([['validUntil', nowFromEpochInSeconds() + 3600]])[0]!
@@ -136,14 +144,17 @@ function createExistingPolicyParameters(params: [string | undefined, any][]) {
         customerId: 0,
         policy: {
           id: 0,
-          parameters: {} as Record<string, any>
+          scope: {
+            id: 0,
+            parameters: {} as Record<string, any>
+          }
         },
-        commitment: (() => new Bun.CryptoHasher('sha256').update('commitment').digest('hex'))()
+        commitment: ZERO_COMMITMENT
       }
     }
 
     if (p[0])
-      param.json.policy.parameters[p[0]] = p[1]
+      param.json.policy.scope.parameters[p[0]] = p[1]
 
     return param
   })
