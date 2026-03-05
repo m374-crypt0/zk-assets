@@ -16,7 +16,7 @@ describe('Commitment creation', () => {
   it('should be able to create a poseidon2 commitment from input', async () => {
     const data: CreateCommitmentOptions = {
       customerId: 0,
-      evmAddress: 0n,
+      authorizedSender: 0n,
       policy: {
         id: 0,
         scope: {
@@ -26,14 +26,14 @@ describe('Commitment creation', () => {
           }
         }
       },
-      secret: 0n
+      customerSecret: 0n
     }
 
     const expectedCommitment = (await bb.poseidon2Hash({
       inputs: [
         (await bb.blake2sToField({ data: Buffer.from([data.customerId]) })).field,
-        (await bb.blake2sToField({ data: Buffer.from(data.secret.toString()) })).field,
-        (await bb.blake2sToField({ data: Buffer.from(data.evmAddress.toString()) })).field,
+        (await bb.blake2sToField({ data: Buffer.from(data.customerSecret.toString()) })).field,
+        (await bb.blake2sToField({ data: Buffer.from(data.authorizedSender.toString()) })).field,
         (await bb.blake2sToField({ data: Buffer.from([data.policy.id]) })).field,
         (await bb.blake2sToField({ data: Buffer.from([data.policy.scope.id]) })).field,
         (await bb.blake2sToField({ data: Buffer.from((data.policy.scope.parameters.validUntil as bigint).toString()) })).field,
