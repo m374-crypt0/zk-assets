@@ -27,11 +27,13 @@ describe('Policy querying', () => {
     expect(res.status).toBe(200)
     expect(await res.json()).toEqual({
       id: 0,
-      assetName: 'RWA_GOLD_ONE_OUNCE',
+      assetName: 'rwa_gold_one_ounce',
       scope: {
-        name: 'HOLD',
+        id: 0,
+        name: 'hold',
         parameters: {
           validUntil: {
+            type: 'number',
             description: 'A UNIX timestamp value with second precision'
           }
         }

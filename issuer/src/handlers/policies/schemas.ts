@@ -69,6 +69,13 @@ export const policySchema = z.object({
     }),
   scope: z
     .object({
+      id: z
+        .number()
+        .min(0)
+        .openapi({
+          description: 'The identifier of this policy scope',
+          example: 0
+        }),
       name: z
         .string()
         .trim()

@@ -1,5 +1,5 @@
 main() {
-  make -C "${ZHOLD_ROOT_DIR}contracts" build
+  make -C "${ISSUER_ROOT_DIR}../contracts" build
 }
 
 main
