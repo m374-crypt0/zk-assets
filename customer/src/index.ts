@@ -10,6 +10,8 @@ import type { CommitmentInputForBackend, InputsForBackend, PublicInputsForBacken
 
 import circuit from "../../circuits/target/rwa_eligibility_v1.json"
 
+import { type OnChainProver } from "./blockchain/types/onChainProver"
+
 export default {
   async createCommitment(options: CommitmentInputForBackend) {
     const hash = await poseidon2HashAsync([
@@ -37,23 +39,33 @@ export default {
 
     return proof
   },
-  async verifyProof(proof: Uint8Array<ArrayBufferLike>, publicInputs: PublicInputsForBackend) {
+  async verifyProofLocally(options: {
+    proof: Uint8Array<ArrayBufferLike>,
+    publicInputs: PublicInputsForBackend
+  }) {
     const bb = await Barretenberg.new({ threads: cpus().length })
     const backend = new UltraHonkBackend(circuit.bytecode, bb)
 
     const backendInputs = [
-      publicInputs.policy.id,
-      publicInputs.policy.scope.id,
-      publicInputs.policy.scope.parameters.valid_until as string,
-      publicInputs.request.sender,
-      publicInputs.request.current_timestamp,
-      publicInputs.request.commitment,
+      options.publicInputs.policy.id,
+      options.publicInputs.policy.scope.id,
+      options.publicInputs.policy.scope.parameters.valid_until as string,
+      options.publicInputs.request.sender,
+      options.publicInputs.request.current_timestamp,
+      options.publicInputs.request.commitment,
     ]
 
-    const result = await backend.verifyProof({ publicInputs: backendInputs, proof }, { verifierTarget: 'evm' })
+    const result = await backend.verifyProof({ publicInputs: backendInputs, proof: options.proof }, { verifierTarget: 'evm' })
 
     await bb.destroy()
 
     return result
+  },
+  async verifyProofOnChain(options: {
+    onChainProver: OnChainProver,
+    proof: Uint8Array<ArrayBufferLike>,
+    publicInputs: PublicInputsForBackend
+  }) {
+    throw new Error('Failed to prove on-chain: invalid commitment')
   }
 }

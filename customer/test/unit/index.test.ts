@@ -1,39 +1,21 @@
 import {
-  type CommitmentInputForBackend,
-  type PolicyInputsForBackend,
   type PrivateInputsForBackend,
   type PublicInputsForBackend
 } from "src/types";
 
 import customer from "src";
 
+import { type OnChainProver } from "src/blockchain/types/onChainProver";
+
+import { MockedOnChainProver } from "test/unit/mock/mockedOnChainProver";
+
 import { poseidon2HashAsync } from "@zkpassport/poseidon2";
 
-import { randomBytes } from "crypto"
+import { describe, expect, it } from "bun:test";
 
-import { BN254_FR_MODULUS } from "@aztec/bb.js"
-
-import { describe, expect, it, } from "bun:test";
+import { getValidProofAndPublicInputs, ZERO_COMMITMENT_OPTIONS } from "test/utility";
 
 describe('Commitment creation', () => {
-
-  const ZERO_COMMITMENT_OPTIONS: CommitmentInputForBackend = {
-    private_inputs: {
-      customer_id: 0n.toString(),
-      authorized_sender: 0n.toString(),
-      customer_secret: 0n.toString(),
-    },
-    policy: {
-      id: 0n.toString(),
-      scope: {
-        id: 0n.toString(),
-        parameters: {
-          valid_until: 0n.toString()
-        }
-      }
-    }
-  }
-
   it('should be able to create a poseidon2 commitment from input', async () => {
     const expectedCommitment = await poseidon2HashAsync([
       BigInt(ZERO_COMMITMENT_OPTIONS.private_inputs.customer_id),
@@ -48,7 +30,9 @@ describe('Commitment creation', () => {
 
     expect(commitment).toBe(expectedCommitment)
   })
+})
 
+describe('Proof creation and local verification', () => {
   it('should not be able to create a proof with wrong inputs', async () => {
     const privateInputs: PrivateInputsForBackend = {
       private_inputs: {
@@ -72,44 +56,24 @@ describe('Commitment creation', () => {
   })
 
   it('should be able to create a proof and verify it against correct inputs', async () => {
-    const customerSecret = BigInt(`0x${randomBytes(32).toString('hex')}`) % BN254_FR_MODULUS
+    const { proof, publicInputs } = await getValidProofAndPublicInputs();
 
-    const privateInputs: PrivateInputsForBackend = {
-      private_inputs: {
-        customer_id: ZERO_COMMITMENT_OPTIONS.private_inputs.customer_id,
-        authorized_sender: 0x1B77B138c7706407ad86438b75D8bA9F9c838A49n.toString(),
-        customer_secret: customerSecret.toString()
-      }
-    }
+    expect(await customer.verifyProofLocally({ proof, publicInputs })).toBeTrue()
+  })
+})
 
-    const policy: PolicyInputsForBackend = {
-      policy: {
-        id: 0n.toString(),
-        scope: {
-          id: 0n.toString(),
-          parameters: {
-            valid_until: 1770380983n.toString()
-          }
-        }
-      }
-    }
+describe('Proof submission to blokchain', () => {
+  it('should fail to verify a proof with wrong inputs', async () => {
+    const { proof, publicInputs } = await getValidProofAndPublicInputs();
+    expect(await customer.verifyProofLocally({ proof, publicInputs })).toBeTrue()
 
-    const commitment = await customer.createCommitment({
-      ...privateInputs,
-      ...policy
-    })
+    publicInputs.request.commitment = '42'
+    const onChainProver: OnChainProver = new MockedOnChainProver(false)
 
-    const publicInputs: PublicInputsForBackend = {
-      ...policy,
-      request: {
-        sender: privateInputs.private_inputs.authorized_sender,
-        current_timestamp: (BigInt(policy.policy.scope.parameters.valid_until as string) - 1n).toString(),
-        commitment: commitment.toString()
-      }
-    }
-
-    const proof = await customer.generateProof({ ...privateInputs, ...publicInputs })
-
-    expect(await customer.verifyProof(proof, publicInputs)).toBeTrue()
+    expect(async () => customer.verifyProofOnChain({
+      onChainProver,
+      proof,
+      publicInputs
+    })).toThrow('Failed to prove on-chain: invalid commitment')
   })
 })
