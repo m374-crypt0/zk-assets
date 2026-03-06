@@ -63,17 +63,44 @@ describe('Proof creation and local verification', () => {
 })
 
 describe('Proof submission to blokchain', () => {
-  it('should fail to verify a proof with wrong inputs', async () => {
+  it('should fail to verify a proof with wrong commitment value', async () => {
     const { proof, publicInputs } = await getValidProofAndPublicInputs();
     expect(await customer.verifyProofLocally({ proof, publicInputs })).toBeTrue()
 
     publicInputs.request.commitment = '42'
-    const onChainProver: OnChainProver = new MockedOnChainProver(false)
+    const onChainProver: OnChainProver = new MockedOnChainProver({ failWith: 'Failed to prove on-chain: invalid commitment' })
 
     expect(async () => customer.verifyProofOnChain({
       onChainProver,
       proof,
       publicInputs
     })).toThrow('Failed to prove on-chain: invalid commitment')
+  })
+
+  it('should fail to verify a proof with correct commitment but with wrong input', async () => {
+    const { proof, publicInputs } = await getValidProofAndPublicInputs();
+    expect(await customer.verifyProofLocally({ proof, publicInputs })).toBeTrue()
+
+    publicInputs.request.sender = '0x1bc0252a41ef0cd6ae425189084252707862aae9'
+    const onChainProver: OnChainProver = new MockedOnChainProver({ failWith: 'Failed to prove on-chain: invalid proof' })
+
+    expect(async () => customer.verifyProofOnChain({
+      onChainProver,
+      proof,
+      publicInputs
+    })).toThrow('Failed to prove on-chain: invalid proof')
+  })
+
+  it('should succeed to verify a proof with correct public inputs', async () => {
+    const { proof, publicInputs } = await getValidProofAndPublicInputs();
+    expect(await customer.verifyProofLocally({ proof, publicInputs })).toBeTrue()
+
+    const onChainProver: OnChainProver = new MockedOnChainProver()
+
+    expect(await customer.verifyProofOnChain({
+      onChainProver,
+      proof,
+      publicInputs
+    })).toBeTrue()
   })
 })

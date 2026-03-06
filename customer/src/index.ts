@@ -66,6 +66,15 @@ export default {
     proof: Uint8Array<ArrayBufferLike>,
     publicInputs: PublicInputsForBackend
   }) {
-    throw new Error('Failed to prove on-chain: invalid commitment')
+    const backendInputs = [
+      options.publicInputs.policy.id,
+      options.publicInputs.policy.scope.id,
+      options.publicInputs.policy.scope.parameters.valid_until as string,
+      options.publicInputs.request.sender,
+      options.publicInputs.request.current_timestamp,
+      options.publicInputs.request.commitment,
+    ]
+
+    return options.onChainProver.prove(options.proof, backendInputs)
   }
 }

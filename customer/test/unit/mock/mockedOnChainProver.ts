@@ -1,16 +1,16 @@
 import type { OnChainProver } from "src/blockchain/types/onChainProver";
 
 export class MockedOnChainProver implements OnChainProver {
-  constructor(mustSucceed: boolean) {
-    this.mustSucceed = mustSucceed
+  constructor(failureOptions?: { failWith: string }) {
+    this.failWith = failureOptions?.failWith
   }
 
   public prove(_proof: Uint8Array<ArrayBufferLike>, _publicInputs: string[]) {
-    if (this.mustSucceed)
-      return Promise.resolve(true)
+    if (this.failWith)
+      return Promise.reject(new Error(this.failWith))
 
-    return Promise.reject(new Error('Error while proving inputs'))
+    return Promise.resolve(true)
   }
 
-  private mustSucceed: boolean
+  private failWith: string | undefined
 }
