@@ -4,14 +4,14 @@ pragma solidity 0.8.33;
 import { IPrimeFieldOrderProvider } from "../src/interfaces/IPrimeFieldOrderProvider.sol";
 
 import { CommitmentStore } from "../src/CommitmentStore.sol";
-import { CompliancyProver } from "../src/CompliancyProver.sol";
+import { Prover } from "../src/Prover.sol";
 
 import { PrimeFieldOrderProvider } from "./stubs/PrimeFieldOrderProvider.sol";
 import { Verifier } from "./stubs/Verifier.sol";
 
 import { Test } from "forge-std/Test.sol";
 
-contract CompliancyProverTests is Test {
+contract ProverTests is Test {
   address public customer;
   address public issuer;
 
@@ -19,7 +19,7 @@ contract CompliancyProverTests is Test {
   Verifier public verifier;
 
   CommitmentStore public store;
-  CompliancyProver public prover;
+  Prover public prover;
 
   uint256 constant commitment = 2;
   bytes public zkpStub;
@@ -41,11 +41,11 @@ contract CompliancyProverTests is Test {
     pfop = new PrimeFieldOrderProvider();
     store = new CommitmentStore(pfop, issuer);
     verifier = new Verifier();
-    prover = new CompliancyProver(verifier, store);
+    prover = new Prover(verifier, store);
   }
 
   function test_prove_fails_ifCommitmentIsNotInTheStore() public {
-    vm.expectRevert(CompliancyProver.InvalidCommitment.selector);
+    vm.expectRevert(Prover.InvalidCommitment.selector);
     prover.prove(zkpStub, publicInputsStub);
   }
 
@@ -56,7 +56,7 @@ contract CompliancyProverTests is Test {
 
     verifier.makeVerificationsFail();
 
-    vm.expectRevert(CompliancyProver.InvalidProof.selector);
+    vm.expectRevert(Prover.InvalidProof.selector);
     prover.prove(zkpStub, publicInputsStub);
   }
 

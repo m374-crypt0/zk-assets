@@ -5,7 +5,7 @@ import { IVerifier } from "./interfaces/IVerifier.sol";
 
 import { CommitmentStore } from "./CommitmentStore.sol";
 
-contract CompliancyProver {
+contract Prover {
   error InvalidCommitment();
   error InvalidProof();
 
