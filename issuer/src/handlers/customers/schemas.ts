@@ -36,7 +36,7 @@ export const recordCompliancyQueryParamsSchema = z.object({
     }),
   commitment: z
     .string()
-    .regex(/^0x[0-9A-F]{64}$/i)
+    .regex(/^0x[0-9A-Fa-f]+$/)
     .nonempty()
     .openapi({
       description: `A commitment, computed by the client and recorded on-chain

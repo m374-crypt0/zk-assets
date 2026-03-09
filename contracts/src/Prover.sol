@@ -22,8 +22,12 @@ contract Prover {
     uint256 commitment = uint256(publicInputs_[5]);
 
     require(store.commitments(commitment), InvalidCommitment());
-    require(verifier.verify(zkp_, publicInputs_), InvalidProof());
 
-    return true;
+    try verifier.verify(zkp_, publicInputs_) returns (bool result) {
+      require(result, InvalidProof());
+      return result;
+    } catch (bytes memory) {
+      revert InvalidProof();
+    }
   }
 }

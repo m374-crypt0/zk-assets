@@ -48,12 +48,23 @@ contract ProverTests is Test {
     prover.prove(zkpStub, publicInputsStub);
   }
 
-  function test_prove_fails_forInvalidProofs() public {
+  function test_prove_fails_forUnderlyingVerifierReturningFalse() public {
     vm.startPrank(issuer);
     store.commit(COMMITMENT);
     vm.stopPrank();
 
-    verifier.makeVerificationsFail();
+    verifier.makeVerifierReturnFalse();
+
+    vm.expectRevert(Prover.InvalidProof.selector);
+    prover.prove(zkpStub, publicInputsStub);
+  }
+
+  function test_prove_fails_forUnderlyingVerifierReverting() public {
+    vm.startPrank(issuer);
+    store.commit(COMMITMENT);
+    vm.stopPrank();
+
+    verifier.makeVerifierRevert();
 
     vm.expectRevert(Prover.InvalidProof.selector);
     prover.prove(zkpStub, publicInputsStub);

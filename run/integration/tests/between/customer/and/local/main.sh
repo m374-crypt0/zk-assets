@@ -12,7 +12,7 @@ deploy_contracts_on_local_blockchain() {
 }
 
 start_issuer_api() {
-  :
+  make -C "${RAKE_ROOT_DIR}issuer" dev_background
 }
 
 run_integration_tests() {
