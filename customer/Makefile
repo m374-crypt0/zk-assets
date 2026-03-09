@@ -11,7 +11,7 @@ help:
 
 .PHONY: deploy_contracts
 deploy_contracts:
-	@${MAKE} -C ${CUSTOMER_ROOT_DIR}../contracts/ local_deploy
+	@${MAKE} -C ${CUSTOMER_ROOT_DIR}../contracts/ local_deploy >/dev/null 2>&1
 
 .PHONY: install
 install:
