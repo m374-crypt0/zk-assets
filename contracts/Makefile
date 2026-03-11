@@ -47,11 +47,11 @@ coverage_ci:
 	@cd $(CONTRACTS_ROOT_DIR) && forge coverage --report lcov
 
 .PHONY: local_deploy
-local_deploy: test
+local_deploy: build test
 	@$(MAKE) run script=LocalDeploy
 
 .PHONY: sepolia_deploy
-sepolia_deploy: test
+sepolia_deploy: build test
 	@cd $(CONTRACTS_ROOT_DIR) \
 		&& forge script script/SepoliaDeploy.s.sol \
 		--rpc-url sepolia \
