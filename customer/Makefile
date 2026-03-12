@@ -15,7 +15,7 @@ deploy_contracts:
 
 .PHONY: install
 install:
-	@bun install
+	@bun install --cwd "${CUSTOMER_ROOT_DIR}"
 
 .PHONY: test
 test: pattern='<unit>'
