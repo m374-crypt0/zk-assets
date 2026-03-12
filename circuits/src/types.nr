@@ -20,6 +20,5 @@ pub(crate) struct Policy {
 
 pub(crate) struct Request {
     pub(crate) sender: Field,
-    pub(crate) current_timestamp: Field,
     pub(crate) commitment: Field,
 }

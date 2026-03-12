@@ -8,7 +8,7 @@ fn create_zero_commitment_inputs() -> (PrivateInputs, Policy, Request) {
         id: 0,
         scope: PolicyScope { id: 0, parameters: PolicyScopeParameters { valid_until: 0 } },
     };
-    let request = Request { sender: 0, current_timestamp: 0, commitment: 0 };
+    let request = Request { sender: 0, commitment: 0 };
 
     (private_inputs, policy, request)
 }
@@ -17,15 +17,6 @@ fn create_zero_commitment_inputs() -> (PrivateInputs, Policy, Request) {
 fn test_main_fails_with_unmatched_sender_addresses() {
     let (private_inputs, policy, mut request) = create_zero_commitment_inputs();
     request.sender = 1;
-
-    main(private_inputs, policy, request);
-}
-
-#[test(should_fail_with = "Time limit exceeded")]
-fn test_main_fails_with_current_timestamp_exceeding_valid_until() {
-    let (private_inputs, mut policy, mut request) = create_zero_commitment_inputs();
-    policy.scope.parameters.valid_until = 1;
-    request.current_timestamp = 2;
 
     main(private_inputs, policy, request);
 }
@@ -61,11 +52,7 @@ fn test_main_succeeds_with_matching_commitment_and_input_hashes() {
         6,
     );
 
-    let request = Request {
-        sender: private_inputs.authorized_sender,
-        current_timestamp: policy.scope.parameters.valid_until,
-        commitment: commitment,
-    };
+    let request = Request { sender: private_inputs.authorized_sender, commitment: commitment };
 
     main(private_inputs, policy, request);
 }
