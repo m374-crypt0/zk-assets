@@ -13,7 +13,7 @@ export type Policy = {
     parameters: PolicyParameters
   }
   validateParameters: (parameters: PolicyParameters) => boolean,
-  validateParameterValues: (parameters: PolicyParameters) => boolean
+  validateParameterValues: (parameters: PolicyParameters, timestamp: () => number) => boolean
 }
 
 export type PolicyRepository = {

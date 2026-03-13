@@ -1,4 +1,3 @@
-import { nowFromEpochInSeconds, thirtyDaysLaterFromEpochInSeconds } from 'src/utility/time'
 import { type PolicyRepository, type Policy } from './types/policyRepository'
 
 export const inMemoryPolicyRepository: PolicyRepository = {
@@ -26,12 +25,12 @@ const repository: Array<Policy> = [{
   validateParameters: (parameters) => {
     return parameters['validUntil'] !== undefined
   },
-  validateParameterValues: (parameters) => {
+  validateParameterValues: (parameters, timestamp) => {
     if (typeof parameters['validUntil'] !== 'number')
       return false
 
-    const timestamp = parameters['validUntil']
+    const v = parameters['validUntil']
 
-    return timestamp > nowFromEpochInSeconds() && timestamp < thirtyDaysLaterFromEpochInSeconds()
+    return v > timestamp() && v < timestamp() + 60 * 60 * 24
   }
 }]

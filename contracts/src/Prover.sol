@@ -28,12 +28,10 @@ contract Prover {
   }
 
   function prove(bytes calldata zkp_, PublicInputs calldata publicInputs_) external view returns (bool) {
-    // NOTE: see ../../circuits/src/main.nr, function main arguments
-    uint256 commitment = uint256(publicInputs_.commitment);
-
     require(block.timestamp <= uint256(publicInputs_.validUntil), ValidityExpired());
-    require(store.commitments(commitment), InvalidCommitment());
+    require(store.commitments(uint256(publicInputs_.commitment)), InvalidCommitment());
 
+    // NOTE: see ../../circuits/src/main.nr, function main arguments
     bytes32[] memory verifierInputs = new bytes32[](4);
     verifierInputs[0] = publicInputs_.policyId;
     verifierInputs[1] = publicInputs_.policyScopeId;

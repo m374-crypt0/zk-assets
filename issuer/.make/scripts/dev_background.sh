@@ -7,7 +7,7 @@ stop_api_if_applicable() {
 }
 
 run_api() {
-  bun run dev "${ISSUER_ROOT_DIR}src/" >/dev/null 2>&1 &
+  bun run "${ISSUER_ROOT_DIR}src/" >"${ISSUER_ROOT_DIR}.issuer_api.out" 2>&1 &
   echo $! >"${ISSUER_ROOT_DIR}.issuer_api.pid"
 }
 

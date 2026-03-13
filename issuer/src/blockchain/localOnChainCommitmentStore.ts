@@ -81,6 +81,12 @@ export class LocalOnChainCommitmentStore implements OnChainCommitmentStore {
     return transactionHash
   }
 
+  public async timestamp() {
+    const block = await this.publicClient.getBlock()
+
+    return Number(block.timestamp);
+  }
+
   private readonly publicClient: PublicClient
   private readonly walletClient: WalletClient
   private readonly account: PrivateKeyAccount

@@ -1,16 +1,14 @@
+import { Barretenberg, UltraHonkBackend } from "@aztec/bb.js"
+import { Noir, type CompiledCircuit } from "@noir-lang/noir_js"
 import { poseidon2HashAsync } from "@zkpassport/poseidon2"
 
-import { Noir, type CompiledCircuit } from "@noir-lang/noir_js"
-
-import { Barretenberg, UltraHonkBackend } from "@aztec/bb.js"
-
 import { cpus } from "node:os"
+import { toHex } from "viem"
 
+import { type OnChainProver, type ProverInputs } from "./blockchain/types/onChainProver"
 import type { CommitmentInputs, Inputs, PublicInputs } from "./types"
 
 import circuit from "circuits/target/rwa_eligibility_v1.json"
-
-import { type OnChainProver } from "./blockchain/types/onChainProver"
 
 export default {
   async createCommitment(options: CommitmentInputs) {
@@ -20,7 +18,7 @@ export default {
       BigInt(options.private_inputs.authorized_sender),
       BigInt(options.policy.id),
       BigInt(options.policy.scope.id),
-      BigInt(options.policy.scope.parameters.valid_until as string)
+      BigInt(options.policy.scope.parameters.valid_until!)
     ])
 
     return hash
@@ -65,14 +63,13 @@ export default {
     proof: Uint8Array<ArrayBufferLike>,
     publicInputs: PublicInputs
   }) {
-    const backendInputs = [
-      options.publicInputs.policy.id,
-      options.publicInputs.policy.scope.id,
-      options.publicInputs.policy.scope.parameters.valid_until as string,
-      options.publicInputs.request.sender,
-      options.publicInputs.request.commitment,
-    ]
+    const proverInputs: ProverInputs = {
+      policyId: toHex(BigInt(options.publicInputs.policy.id), { size: 32 }),
+      policyScopeId: toHex(BigInt(options.publicInputs.policy.scope.id), { size: 32 }),
+      validUntil: toHex(BigInt(options.publicInputs.policy.scope.parameters.valid_until!), { size: 32 }),
+      commitment: toHex(BigInt(options.publicInputs.request.commitment), { size: 32 })
+    }
 
-    return options.onChainProver.prove(options.proof, backendInputs)
+    return options.onChainProver.prove(options.proof, proverInputs)
   }
 }

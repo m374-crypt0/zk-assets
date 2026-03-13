@@ -45,7 +45,9 @@ export default new OpenAPIHono<CustomerEnv>()
       if (!policy.validateParameters(params.policy.scope.parameters))
         return c.json({ error: 'Bad policy parameters' }, 400)
 
-      if (!policy.validateParameterValues(params.policy.scope.parameters))
+      const now = await c.env.onChainSigner.timestamp()
+
+      if (!policy.validateParameterValues(params.policy.scope.parameters, () => now))
         return c.json({ error: 'Bad policy parameter values' }, 400)
 
       let result: string

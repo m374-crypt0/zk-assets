@@ -1,6 +1,6 @@
 import abi from "contracts/out/Prover.sol";
 import { contractAddresses } from "src/blockchain/utility/contractAddresses";
-import type { OnChainProver } from "./types/onChainProver";
+import type { OnChainProver, ProverInputs } from "./types/onChainProver";
 
 import {
   ContractFunctionExecutionError,
@@ -9,7 +9,6 @@ import {
   defineChain,
   fromBytes,
   http,
-  toHex,
   type PublicClient
 } from "viem";
 
@@ -28,7 +27,7 @@ export class LocalOnChainProver implements OnChainProver {
     this.publicClient = createPublicClient(clientConfig)
   }
 
-  async prove(proof: Uint8Array<ArrayBufferLike>, publicInputs: string[]) {
+  async prove(proof: Uint8Array<ArrayBufferLike>, proverInputs: ProverInputs) {
     let result: boolean = false;
 
     try {
@@ -38,10 +37,11 @@ export class LocalOnChainProver implements OnChainProver {
         functionName: 'prove',
         args: [
           fromBytes(proof, 'hex'),
-          publicInputs.map(input => toHex(BigInt(input), { size: 32 }))
+          proverInputs
         ],
       })
     } catch (e) {
+
       const executionError = e as ContractFunctionExecutionError
       const revertedError = executionError.cause as ContractFunctionRevertedError
 
@@ -49,6 +49,12 @@ export class LocalOnChainProver implements OnChainProver {
     }
 
     return result;
+  }
+
+  async timestamp() {
+    const block = await this.publicClient.getBlock();
+
+    return Number(block.timestamp);
   }
 
   private readonly publicClient: PublicClient

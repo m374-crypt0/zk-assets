@@ -22,7 +22,7 @@ describe('Commitment creation', () => {
       BigInt(private_inputs.authorized_sender),
       BigInt(policy.id),
       BigInt(policy.scope.id),
-      BigInt(policy.scope.parameters.valid_until.toString())
+      BigInt(policy.scope.parameters.valid_until)
     ])
 
     const commitment = await customer.createCommitment({ policy, private_inputs })
