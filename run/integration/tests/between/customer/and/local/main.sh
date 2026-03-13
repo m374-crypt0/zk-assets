@@ -24,11 +24,7 @@ start_issuer_api() {
 }
 
 run_integration_tests() {
-  if [ "$WATCHING" = 'true' ]; then
-    make -C "${ZHOLD_ROOT_DIR}" customer pattern=integration watch
-  else
-    make -C "${ZHOLD_ROOT_DIR}" customer pattern=integration test
-  fi
+  make -C "${ZHOLD_ROOT_DIR}" customer pattern=integration test
 }
 
 main() {

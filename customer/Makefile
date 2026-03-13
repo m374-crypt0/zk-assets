@@ -9,9 +9,9 @@ CUSTOMER_ROOT_DIR := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 help:
 	@. ${CUSTOMER_ROOT_DIR}.make/scripts/help.sh
 
-.PHONY: deploy_contracts
-deploy_contracts:
-	@${MAKE} -C ${CUSTOMER_ROOT_DIR}../contracts/ local_deploy >/dev/null 2>&1
+.PHONY: build_contracts
+build_contracts:
+	@${MAKE} -C ${CUSTOMER_ROOT_DIR}../contracts/ build >/dev/null 2>&1
 
 .PHONY: install
 install:
@@ -19,10 +19,10 @@ install:
 
 .PHONY: test
 test: pattern='<unit>'
-test: deploy_contracts install
+test: build_contracts install
 	@bun test --test-name-pattern=${pattern}
 
 .PHONY: watch
 watch: pattern='<unit>'
-watch: deploy_contracts install
+watch: build_contracts install
 	@bun --watch test --test-name-pattern=${pattern}

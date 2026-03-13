@@ -5,6 +5,5 @@ include $(ZHOLD_ROOT_DIR)contracts/.env
 export
 
 .PHONY: blockchain
-blockchain: WATCHING=
 blockchain:
 	@. ${LOCAL_ROOT_DIR}main.sh

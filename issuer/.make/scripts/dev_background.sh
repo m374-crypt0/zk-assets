@@ -1,6 +1,7 @@
 stop_api_if_applicable() {
   if [ -f "${ISSUER_ROOT_DIR}.issuer_api.pid" ]; then
     kill "$(cat "${ISSUER_ROOT_DIR}.issuer_api.pid")" >/dev/null 2>&1
+    rm "${ISSUER_ROOT_DIR}.issuer_api.pid"
   fi
 
   return 0
