@@ -25,8 +25,8 @@ describe('Proof submission to blockchain', () => {
   let onChainProver: OnChainProver;
 
   beforeAll(async () => {
-    onChainProver = new LocalOnChainProver()
     sender = privateKeyToAccount(process.env['TEST_PRIVATE_KEY_03'] as `0x${string}`).address
+    onChainProver = new LocalOnChainProver({ sender })
     await registerUserUsingIssuerApi()
     privateInputs = {
       authorized_sender: sender,
@@ -89,7 +89,7 @@ describe('Proof submission to blockchain', () => {
     })).toThrow('InvalidCommitment')
   })
 
-  it.only(`${should} fail to prove on-chain with mismatch proof and public input set`, async () => {
+  it(`${should} fail to prove on-chain with mismatch proof and public input set`, async () => {
     const policy = getTestingPolicy()
 
     // NOTE: ensures this policy parameter is high enough to not fail in the Prover smart contract
@@ -131,8 +131,37 @@ describe('Proof submission to blockchain', () => {
   })
 
   it(`${should} succeeds to prove on-chain with a valid public input set`, async () => {
-    const { proof, publicInputs } = await registerThenCreateProofThenRecordCompliancy()
-    const onChainProver: OnChainProver = new LocalOnChainProver()
+    const policy = getTestingPolicy()
+
+    // NOTE: ensures this policy parameter is high enough to not fail in the Prover smart contract
+    policy.scope.parameters.valid_until = await onChainProver.timestamp() + 3600
+
+    const commitment = await createCommitment(policy)
+
+    await recordCompliancyUsingIssuerApi({
+      commitment,
+      policy: {
+        id: Number(policy.id),
+        scope: {
+          id: Number(policy.scope.id),
+          parameters: {
+            validUntil: policy.scope.parameters.valid_until
+          }
+        }
+      },
+      customerId: Number(privateInputs.customer_id)
+    })
+
+    const publicInputs: PublicInputs = {
+      policy,
+      request: {
+        sender,
+        commitment
+      }
+    }
+
+    const proof = await getValidProofForTesting({ privateInputs, publicInputs });
+    expect(await customer.verifyProofLocally({ proof, publicInputs })).toBeTrue()
 
     const result = await customer.verifyProofOnChain({
       onChainProver,
@@ -142,33 +171,6 @@ describe('Proof submission to blockchain', () => {
 
     expect(result).toBeTrue()
   })
-
-  async function registerThenCreateProofThenRecordCompliancy() {
-    const privateInputs: Parameters<typeof getValidProofForTesting>[0] = {
-      customer_id: (await registerUserUsingIssuerApi()).toString(),
-      customer_secret: createCustomerSecret(),
-      authorized_sender: privateKeyToAccount(process.env['TEST_PRIVATE_KEY_03']! as `0x${string}`).address
-    }
-
-    const { proof, publicInputs } = await getValidProofForTesting(privateInputs);
-    expect(await customer.verifyProofLocally({ proof, publicInputs })).toBeTrue()
-
-    await recordCompliancyUsingIssuerApi({
-      customerId: Number(privateInputs.customer_id),
-      policy: {
-        id: Number(publicInputs.policy.id),
-        scope: {
-          id: Number(publicInputs.policy.scope.id),
-          parameters: {
-            validUntil: Number(publicInputs.policy.scope.parameters.valid_until)
-          }
-        }
-      },
-      commitment: `0x${BigInt(publicInputs.request.commitment).toString(16)}`
-    })
-
-    return { proof, publicInputs }
-  }
 
   async function registerUserUsingIssuerApi() {
     const headers = new Headers()

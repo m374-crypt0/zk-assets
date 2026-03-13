@@ -12,22 +12,20 @@ type Broadcast = {
   }]
 }
 
-const stubbedBroadcast: Broadcast = {
-  transactions: [
-    {
-      contractName: '',
-      contractAddress: ''
-    }
-  ]
-}
-
 type Address = `0x${string}`
 
 async function getTransactionsFromRunLatestIfAny(): Promise<Broadcast> {
   const rootDir = process.env['ZHOLD_ROOT_DIR']!
   const file = Bun.file(`${rootDir}contracts/broadcast/LocalDeploy.s.sol/1/run-latest.json`)
-  if (!await file.exists())
-    return stubbedBroadcast
+  if (!(await file.exists()))
+    return {
+      transactions: [
+        {
+          contractName: '',
+          contractAddress: ''
+        }
+      ]
+    }
 
   return await file.json() as Broadcast
 }

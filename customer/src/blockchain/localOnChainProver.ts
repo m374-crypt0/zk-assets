@@ -9,14 +9,15 @@ import {
   defineChain,
   fromBytes,
   http,
+  type Address,
   type PublicClient
 } from "viem";
 
 import { anvil } from "viem/chains";
 
 export class LocalOnChainProver implements OnChainProver {
-  constructor() {
-    const clientConfig = {
+  constructor(options: { sender: Address }) {
+    const clientConfig: Parameters<typeof createPublicClient>[0] = {
       chain: defineChain({
         ...anvil,
         id: 1
@@ -25,6 +26,7 @@ export class LocalOnChainProver implements OnChainProver {
     }
 
     this.publicClient = createPublicClient(clientConfig)
+    this.sender = options.sender
   }
 
   async prove(proof: Uint8Array<ArrayBufferLike>, proverInputs: ProverInputs) {
@@ -39,9 +41,9 @@ export class LocalOnChainProver implements OnChainProver {
           fromBytes(proof, 'hex'),
           proverInputs
         ],
+        account: this.sender
       })
     } catch (e) {
-
       const executionError = e as ContractFunctionExecutionError
       const revertedError = executionError.cause as ContractFunctionRevertedError
 
@@ -57,5 +59,6 @@ export class LocalOnChainProver implements OnChainProver {
     return Number(block.timestamp);
   }
 
+  private readonly sender: Address
   private readonly publicClient: PublicClient
 }

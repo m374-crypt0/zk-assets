@@ -32,11 +32,12 @@ contract Prover {
     require(store.commitments(uint256(publicInputs_.commitment)), InvalidCommitment());
 
     // NOTE: see ../../circuits/src/main.nr, function main arguments
-    bytes32[] memory verifierInputs = new bytes32[](4);
+    bytes32[] memory verifierInputs = new bytes32[](5);
     verifierInputs[0] = publicInputs_.policyId;
     verifierInputs[1] = publicInputs_.policyScopeId;
     verifierInputs[2] = publicInputs_.validUntil;
-    verifierInputs[3] = publicInputs_.commitment;
+    verifierInputs[3] = bytes32(uint256(uint160(msg.sender)));
+    verifierInputs[4] = publicInputs_.commitment;
 
     try verifier.verify(zkp_, verifierInputs) returns (bool result) {
       require(result, InvalidProof());
