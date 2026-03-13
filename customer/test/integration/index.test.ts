@@ -1,15 +1,16 @@
 import customer from "src";
 
+import type { PolicyInputs, PrivateInputs, PublicInputs } from "src/types";
+
 import { LocalOnChainProver } from 'src/blockchain/localOnChainProver';
 import type { OnChainProver } from "src/blockchain/types/onChainProver";
-
-import { privateKeyToAccount } from "viem/accounts";
 
 import { createCustomerSecret, getTestingCustomerId, getTestingPolicy, getValidProofForTesting } from "test/utility";
 
 import { beforeAll, describe, expect, it } from "bun:test";
-import type { PolicyInputs, PrivateInputs, PublicInputs } from "src/types";
+
 import { toHex } from "viem";
+import { privateKeyToAccount } from "viem/accounts";
 
 const should = '<integration> should'
 
