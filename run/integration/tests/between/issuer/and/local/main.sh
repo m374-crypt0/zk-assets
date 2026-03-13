@@ -16,8 +16,8 @@ deploy_contracts_on_local_blockchain() {
 }
 
 run_integration_tests() {
-  if [ "$WATCHING" = 'true' ]; then
-    make -C "${ZHOLD_ROOT_DIR}" issuer pattern=integration watch
+  if [ "$COVERAGE" = 'true' ]; then
+    make -C "${ZHOLD_ROOT_DIR}" issuer pattern=integration coverage
   else
     make -C "${ZHOLD_ROOT_DIR}" issuer pattern=integration test
   fi
