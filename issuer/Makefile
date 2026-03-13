@@ -11,7 +11,7 @@ help:
 
 .PHONY: build
 build:
-	@. ${ISSUER_ROOT_DIR}.make/scripts/build.sh
+	@${MAKE} -C ${ISSUER_ROOT_DIR}../contracts/ build >/dev/null 2>&1
 
 .PHONY: install
 install:
