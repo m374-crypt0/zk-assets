@@ -1,5 +1,4 @@
-use super::main;
-use super::types::{Policy, PolicyScope, PolicyScopeParameters, PrivateInputs, Request};
+use super::{main, types::{Policy, PolicyScope, PolicyScopeParameters, PrivateInputs, Request}};
 use ::poseidon::poseidon2::Poseidon2;
 
 fn create_zero_commitment_inputs() -> (PrivateInputs, Policy, Request) {
