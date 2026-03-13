@@ -7,10 +7,7 @@ contract LocalDeployScript is Script {
   address private sender;
   address private commitmentStoreOwner;
 
-  function setUp() public {
-    sender = vm.envAddress("TEST_SENDER_ADDRESS");
-    commitmentStoreOwner = vm.addr(uint256(vm.envBytes32("TEST_PRIVATE_KEY_01")));
-  }
+  function setUp() public { }
 
   function run() public { }
 
