@@ -7,6 +7,9 @@ uint256 constant LOG_N = 8;
 uint256 constant NUMBER_OF_PUBLIC_INPUTS = 13;
 uint256 constant VK_HASH = 0x0fa4f1eb3d988b0f8908cd686cf9e99d4cf1355e13e69168d61636ab9b875b0e;
 library HonkVerificationKey {
+    // NOTE: exclude this library from coverage reports
+    function test() private pure { }
+
     function loadVerificationKey() internal pure returns (Honk.VerificationKey memory) {
         Honk.VerificationKey memory vk = Honk.VerificationKey({
             circuitSize: uint256(256),
@@ -180,6 +183,9 @@ Fr constant ZERO = Fr.wrap(0);
 // Instantiation
 
 library FrLib {
+    // NOTE: exclude this library from coverage reports
+    function test() private pure { }
+
     bytes4 internal constant FRLIB_MODEXP_FAILED_SELECTOR = 0xf8d61709;
 
     function invert(Fr value) internal view returns (Fr) {
@@ -509,6 +515,9 @@ struct ZKTranscript {
 }
 
 library ZKTranscriptLib {
+    // NOTE: exclude this library from coverage reports
+    function test() private pure { }
+
     function generateTranscript(
         Honk.ZKProof memory proof,
         bytes32[] calldata publicInputs,
@@ -850,6 +859,9 @@ library ZKTranscriptLib {
 }
 
 library RelationsLib {
+    // NOTE: exclude this library from coverage reports
+    function test() private pure { }
+
     struct EllipticParams {
         // Points
         Fr x_1;
@@ -1568,6 +1580,9 @@ library RelationsLib {
 }
 
 library CommitmentSchemeLib {
+    // NOTE: exclude this library from coverage reports
+    function test() private pure { }
+
     using FrLib for Fr;
 
     // Avoid stack too deep
@@ -1894,6 +1909,9 @@ function pairing(Honk.G1Point memory rhs, Honk.G1Point memory lhs) view returns 
 }
 
 abstract contract BaseZKHonkVerifier is IVerifier {
+    // NOTE: exclude this contract from coverage reports
+    function test() virtual internal pure { }
+
     using FrLib for Fr;
 
     struct PairingInputs {
@@ -2455,6 +2473,9 @@ abstract contract BaseZKHonkVerifier is IVerifier {
 }
 
 contract HonkVerifier is BaseZKHonkVerifier(N, LOG_N, VK_HASH, NUMBER_OF_PUBLIC_INPUTS) {
+    // NOTE: exclude this contract from coverage reports
+    function test() internal pure override { }
+
      function loadVerificationKey() internal pure override returns (Honk.VerificationKey memory) {
        return HonkVerificationKey.loadVerificationKey();
     }
