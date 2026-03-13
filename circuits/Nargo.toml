@@ -1,5 +1,5 @@
 [package]
-name = "rwa_eligibility_v1"
+name = "zhold_v1"
 type = "bin"
 authors = ["m374-crypt0"]
 compiler_version = "1.0.0"
