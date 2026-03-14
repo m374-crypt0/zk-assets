@@ -8,7 +8,7 @@ import { toHex } from "viem"
 import { type OnChainProver, type ProverInputs } from "./blockchain/types/onChainProver"
 import type { CommitmentInputs, Inputs, PublicInputs } from "./types"
 
-import circuit from "circuits/target/zhold_v1.json"
+import circuit from "circuits/target/zk_assets_v1.json"
 
 export default {
   async createCommitment(options: CommitmentInputs) {
