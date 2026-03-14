@@ -27,6 +27,22 @@ fn test_main_fails_with_unmatched_commitment_and_input_hashes() {
     main(private_inputs, policy, request);
 }
 
+#[test(should_fail_with = "Invalid policy identifier. Only 0 is supported")]
+fn test_main_fails_with_invalid_policy_identifier() {
+    let (private_inputs, mut policy, request) = create_zero_commitment_inputs();
+    policy.id = 1;
+
+    main(private_inputs, policy, request);
+}
+
+#[test(should_fail_with = "Invalid policy scope identifier. Only 0 is supported")]
+fn test_main_fails_with_invalid_policy_scope_identifier() {
+    let (private_inputs, mut policy, request) = create_zero_commitment_inputs();
+    policy.scope.id = 1;
+
+    main(private_inputs, policy, request);
+}
+
 #[test]
 fn test_main_succeeds_with_matching_commitment_and_input_hashes() {
     let private_inputs = PrivateInputs {

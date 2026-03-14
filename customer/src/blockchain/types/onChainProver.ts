@@ -7,5 +7,6 @@ export type ProverInputs = {
 
 export type OnChainProver = {
   prove: (proof: Uint8Array<ArrayBufferLike>, proverInputs: ProverInputs) => Promise<boolean>
+  timestamp: () => Promise<number>
 }
 

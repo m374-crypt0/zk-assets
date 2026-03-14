@@ -110,7 +110,7 @@ describe('Proof submission to blockchain', () => {
     const proof = await getValidProofForTesting({ privateInputs, publicInputs });
     expect(await customer.verifyProofLocally({ proof, publicInputs })).toBeTrue()
 
-    publicInputs.policy.scope.id = '42'
+    publicInputs.policy.scope.parameters.valid_until = Number.MAX_SAFE_INTEGER.toString()
 
     expect(() => customer.verifyProofOnChain({
       onChainProver,
