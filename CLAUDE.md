@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**zhold** is a zero-knowledge eligibility proof system for Real-World Asset
+**zk-assets** is a zero-knowledge eligibility proof system for Real-World Asset
 (RWA) protocols. It allows users to prove on-chain compliance with off-chain
 rules without revealing identity, jurisdiction, or private compliance data. The
 system uses Noir circuits with a Barretenberg (UltraHonk) backend, and Solidity

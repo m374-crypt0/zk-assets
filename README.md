@@ -1,9 +1,9 @@
-# zhold — Prove you can hold any RWA. Privately
+# zk-assets — Prove you can hold any RWA. Privately
 
 > A zero-knowledge eligibility proof system for Real-World Asset (RWA) protocols.
 
 <!--toc:start-->
-- [zhold — Prove you can hold any RWA. Privately](#zhold-prove-you-can-hold-any-rwa-privately)
+- [zk-assets — Prove you can hold any RWA. Privately](#zk-assets-prove-you-can-hold-any-rwa-privately)
   - [The compliance problem](#the-compliance-problem)
     - [The challenge](#the-challenge)
     - [The insight](#the-insight)
@@ -21,7 +21,7 @@
     - [Step 1 — Compile the circuit and generate the Solidity verifier](#step-1-compile-the-circuit-and-generate-the-solidity-verifier)
     - [Step 2 — Run contract tests](#step-2-run-contract-tests)
     - [Step 3 — Run the issuer integration tests](#step-3-run-the-issuer-integration-tests)
-    - [Step 4 — Run the full end-to-end demo](#step-4-run-the-full-end-to-end-demo)
+    - [Step 4 — Run the customer integration test suite](#step-4-run-the-customer-integration-test-suite)
 <!--toc:end-->
 
 ---
@@ -54,14 +54,14 @@ The core challenge is:
 ### The insight
 
 Mathematical proofs can confirm a fact without revealing why it is true.
-*zhold* uses this to let a customer prove they are eligible to hold an asset
+*zk-assets* uses this to let a customer prove they are eligible to hold an asset
 without disclosing any of the underlying reasons. A proof is generated entirely
 on the customer's device. Only a single cryptographic value — a **commitment** —
 ever reaches the blockchain, recorded there by the issuer.
 
 ### Risks alleviated
 
-| Risk | Without zhold | With zhold |
+| Risk | Without zk-assets | With zk-assets |
 |---|---|---|
 | Identity disclosure | KYC data linked to wallet on-chain | No personal data on-chain, ever |
 | Regulatory exposure | Publishing compliance data may violate GDPR / local law | Nothing sensitive published |
@@ -86,7 +86,7 @@ The following are explicitly **out of scope**:
 
 ### Trust model
 
-*zhold* does not eliminate trust — it makes it explicit and minimal:
+*zk-assets* does not eliminate trust — it makes it explicit and minimal:
 
 - **Issuer** is trusted to correctly evaluate eligibility before recording
   commitments. This is the only trust boundary that touches private data.
@@ -107,7 +107,7 @@ The following are explicitly **out of scope**:
 
 ```
 ┌──────────────────────────────────────────────────────────────────┐
-│                           zhold                                  │
+│                         zk-assets                                │
 │                                                                  │
 │  ┌──────────┐  generates  ┌────────────┐                         │
 │  │ circuits │─────────────▶ contracts  │                         │

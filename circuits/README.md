@@ -11,7 +11,7 @@
   - [Circuit inputs](#circuit-inputs)
     - [Private inputs](#private-inputs)
     - [Public inputs](#public-inputs)
-  - [Interactions in the entire *zhold* system](#interactions-in-the-entire-zhold-system)
+  - [Interactions in the entire *zk-assets* system](#interactions-in-the-entire-zk-assets-system)
     - [Flow](#flow)
   - [Final words](#final-words)
 <!--toc:end-->
@@ -56,7 +56,7 @@
 > context before forwarding to the Verifier. This prevents the customer from
 > claiming an arbitrary sender or timestamp.
 
-## Interactions in the entire *zhold* system
+## Interactions in the entire *zk-assets* system
 
 ### Flow
 
@@ -83,6 +83,6 @@
 
 ## Final words
 
-**circuits** is the most critical component of *zhold*. Its logic determines
+**circuits** is the most critical component of *zk-assets*. Its logic determines
 what "proven" means for the entire system. It must be clear, correct, and
 governed with the same rigour as a smart contract.

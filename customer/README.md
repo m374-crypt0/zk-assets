@@ -8,7 +8,7 @@
 - [customer — Prove compliance without disclosure](#customer-prove-compliance-without-disclosure)
   - [Responsibilities](#responsibilities)
   - [Trust boundaries](#trust-boundaries)
-  - [Interactions in the entire *zhold* system](#interactions-in-the-entire-zhold-system)
+  - [Interactions in the entire *zk-assets* system](#interactions-in-the-entire-zk-assets-system)
     - [Flow](#flow)
   - [A word about the customer](#a-word-about-the-customer)
 <!--toc:end-->
@@ -37,7 +37,7 @@ assumptions are:
 The customer's identity is not proven on-chain; this is intentional and
 explicit in the system design.
 
-## Interactions in the entire *zhold* system
+## Interactions in the entire *zk-assets* system
 
 ### Flow
 

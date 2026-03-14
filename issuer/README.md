@@ -8,7 +8,7 @@
 - [issuer — The organization managing Real World Assets](#issuer-the-organization-managing-real-world-assets)
   - [Responsibilities](#responsibilities)
   - [Trust boundaries](#trust-boundaries)
-  - [Interactions in the entire *zhold* system](#interactions-in-the-entire-zhold-system)
+  - [Interactions in the entire *zk-assets* system](#interactions-in-the-entire-zk-assets-system)
     - [Flow](#flow)
   - [A word about the issuer platform](#a-word-about-the-issuer-platform)
 <!--toc:end-->
@@ -23,7 +23,7 @@
 
 ## Trust boundaries
 
-The issuer is the **sole trust boundary** in the *zhold* system where private
+The issuer is the **sole trust boundary** in the *zk-assets* system where private
 data is handled. It is assumed trustworthy for:
 
 - Managing RWA access in compliance with applicable laws, regulations, and
@@ -32,7 +32,7 @@ data is handled. It is assumed trustworthy for:
 - Correctly evaluating customer eligibility before recording any commitment
   on-chain.
 
-## Interactions in the entire *zhold* system
+## Interactions in the entire *zk-assets* system
 
 ### Flow
 

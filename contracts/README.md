@@ -11,7 +11,7 @@
     - [Prover](#prover)
     - [Verifier](#verifier)
   - [Trust boundaries](#trust-boundaries)
-  - [Interactions in the entire *zhold* system](#interactions-in-the-entire-zhold-system)
+  - [Interactions in the entire *zk-assets* system](#interactions-in-the-entire-zk-assets-system)
     - [Flow](#flow)
   - [Final words](#final-words)
 <!--toc:end-->
@@ -53,7 +53,7 @@
 - The **Verifier** contract is only as correct as the circuit it was generated
   from.
 
-## Interactions in the entire *zhold* system
+## Interactions in the entire *zk-assets* system
 
 ### Flow
 
