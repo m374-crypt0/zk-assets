@@ -1,4 +1,4 @@
-# zk-assets — Prove you can hold any RWA. Privately
+# zk-assets — Prove you are eligible to any RWA policy. Privately
 
 > A zero-knowledge eligibility proof system for Real-World Asset (RWA) protocols.
 
