@@ -51,14 +51,20 @@ Package: **`zk_assets_rwa_1_hold_v1`**
 
 ### Public inputs
 
-| Input | Description | Supplied by |
-|---|---|---|
-| `policy.id` | Identifier of the policy being proven | customer |
-| `policy.scope.id` | Scope identifier (e.g. *holding*) | customer |
-| `policy.scope.parameters.valid_until` | Expiry timestamp of the policy | customer |
-| `request.sender` | EVM address submitting the proof on-chain | `Prover.sol` (`msg.sender`) |
-| `request.current_timestamp` | Block timestamp at proof submission | `Prover.sol` (`block.timestamp`) |
-| `request.commitment` | Poseidon2 hash of private inputs + policy; stored on-chain by the issuer | customer |
+| Input | Accepted value | Description | Supplied by |
+|---|---|---|---|
+| `policy.id` | `0` (enforced) | Identifier of the policy being proven | customer |
+| `policy.scope.id` | `0` (enforced) | Scope identifier for the `hold` scope | customer |
+| `policy.scope.parameters.valid_until` | any `u64` | Expiry timestamp of the policy | customer |
+| `request.sender` | `msg.sender` | EVM address submitting the proof on-chain | `Prover.sol` |
+| `request.current_timestamp` | `block.timestamp` | Block timestamp at proof submission | `Prover.sol` |
+| `request.commitment` | — | Poseidon2 hash of private inputs + policy; stored on-chain by the issuer | customer |
+
+> `policy.id` and `policy.scope.id` are hard-constrained to `0` in the circuit.
+> Proofs built with any other value will fail witness generation. These
+> constraints are what tie this circuit to exactly one asset (`rwa_1`) and one
+> scope (`hold`). A new asset or scope requires a dedicated circuit — see the
+> [workspace README](../../README.md#adding-a-new-circuit).
 
 > `sender` and `current_timestamp` are not part of the `Inputs` struct the
 > customer submits to `Prover.sol`. The Prover injects them from the transaction

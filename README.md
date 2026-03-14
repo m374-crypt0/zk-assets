@@ -219,9 +219,9 @@ git submodule update --init --recursive
 cd contracts && cp .env.sample .env
 ```
 
-Edit `contracts/.env` and set `MAINNET_URL` (an Ethereum RPC endpoint) and
-`MAINNET_FORK_BLOCK` (a recent stable block number). All other values are
-pre-filled for local development.
+All values are pre-filled for local development. No external RPC endpoint is
+required — the test suite runs against a local Anvil instance without forking
+mainnet.
 
 ### Step 1 — Compile the circuits and generate the Solidity verifiers
 
@@ -244,8 +244,7 @@ make contracts testv       # verbose output
 make contracts coverage    # coverage report
 ```
 
-Tests run against a forked mainnet. Foundry and Makefiles launches and manages
-Anvil automatically.
+Foundry and Makefiles launch and manage a local Anvil instance automatically.
 
 ### Step 3 — Run the issuer integration tests
 
