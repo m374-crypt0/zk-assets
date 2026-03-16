@@ -1,7 +1,6 @@
 # contracts — The on-chain commitment and verification layer
 
 [![CI - contracts](https://github.com/m374-crypt0/zk-assets/actions/workflows/ci-contracts.yaml/badge.svg)](https://github.com/m374-crypt0/zk-assets/actions/workflows/ci-contracts.yaml)
-[![codecov](https://codecov.io/github/m374-crypt0/zk-assets/branch/main/graph/badge.svg?token=F73NNGE7ZJ)](https://codecov.io/github/m374-crypt0/zk-assets)
 
 > **contracts** is a Foundry project containing the Solidity smart contracts
 > that store eligibility commitments, revoke them, and verify ZK proofs
