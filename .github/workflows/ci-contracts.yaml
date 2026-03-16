@@ -1,9 +1,15 @@
 name: CI - contracts
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
+    paths:
+      - "contracts/**"
+  pull_request:
+    paths:
+      - "contracts/**"
 
 jobs:
   ci:
@@ -15,7 +21,7 @@ jobs:
           - coverage
     steps:
       - name: checkout repository
-        uses: actions/checkout@main
+        uses: actions/checkout@v4
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
         with:
