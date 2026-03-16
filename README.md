@@ -10,6 +10,8 @@
 
 [![CI - customer](https://github.com/m374-crypt0/zk-assets/actions/workflows/ci-customer.yaml/badge.svg)](https://github.com/m374-crypt0/zk-assets/actions/workflows/ci-customer.yaml)
 
+[![CI - issuer](https://github.com/m374-crypt0/zk-assets/actions/workflows/ci-issuer.yaml/badge.svg)](https://github.com/m374-crypt0/zk-assets/actions/workflows/ci-issuer.yaml)
+
 <!--toc:start-->
 - [zk-assets — Prove you are eligible to any RWA policy. Privately](#zk-assets-prove-you-are-eligible-to-any-rwa-policy-privately)
   - [Status](#status)

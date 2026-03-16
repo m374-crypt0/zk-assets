@@ -1,5 +1,7 @@
 # issuer — The organization managing Real World Assets
 
+[![CI - issuer](https://github.com/m374-crypt0/zk-assets/actions/workflows/ci-issuer.yaml/badge.svg)](https://github.com/m374-crypt0/zk-assets/actions/workflows/ci-issuer.yaml)
+
 > The **issuer** represents the RWA organization: it evaluates customer
 > eligibility, exposes policies, and records eligibility commitments on-chain.
 > It is the only component that handles private customer data.
