@@ -24,4 +24,6 @@ jobs:
           toolchain: 1.0.0
 
       - name: Run circuit tests
-        run: make circuits test
+        run: |
+          export PATH="${PATH}:${GITHUB_PATH}"
+          make circuits test
