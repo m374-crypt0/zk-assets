@@ -1,0 +1,30 @@
+name: CI - contracts
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target:
+          - test
+          - coverage
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@main
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: nightly
+      - name: Execute ${{ matrix.target }}
+        run: make contracts ${{ matrix.target == 'test' && 'test' || 'coverage_ci' }}
+      - name: Upload coverage reports to Codecov
+        if: matrix.target == 'coverage'
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./contracts/lcov.info
