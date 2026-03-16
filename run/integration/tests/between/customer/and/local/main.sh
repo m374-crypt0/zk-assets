@@ -25,9 +25,11 @@ start_issuer_api() {
 
 run_integration_tests() {
   if [ "$COVERAGE" = 'true' ]; then
-    make -C "${ZK_ASSETS_ROOT_DIR}" customer pattern=integration coverage
+    make -C "${ZK_ASSETS_ROOT_DIR}" customer pattern='<integration>' coverage
+  elif [ "$COVERAGE_CI" = 'true' ]; then
+    make -C "${ZK_ASSETS_ROOT_DIR}" customer pattern='<integration>' coverage_ci
   else
-    make -C "${ZK_ASSETS_ROOT_DIR}" customer pattern=integration test
+    make -C "${ZK_ASSETS_ROOT_DIR}" customer pattern='<integration>' test
   fi
 }
 

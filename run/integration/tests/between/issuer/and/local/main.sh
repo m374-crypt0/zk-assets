@@ -17,9 +17,11 @@ deploy_contracts_on_local_blockchain() {
 
 run_integration_tests() {
   if [ "$COVERAGE" = 'true' ]; then
-    make -C "${ZK_ASSETS_ROOT_DIR}" issuer pattern=integration coverage
+    make -C "${ZK_ASSETS_ROOT_DIR}" issuer pattern='<integration>' coverage
+  elif [ "$COVERAGE_CI" = 'true' ]; then
+    make -C "${ZK_ASSETS_ROOT_DIR}" issuer pattern='<integration>' coverage_ci
   else
-    make -C "${ZK_ASSETS_ROOT_DIR}" issuer pattern=integration test
+    make -C "${ZK_ASSETS_ROOT_DIR}" issuer pattern='<integration>' test
   fi
 }
 

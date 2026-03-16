@@ -18,16 +18,26 @@ install:
 	@bun install --cwd "${CUSTOMER_ROOT_DIR}"
 
 .PHONY: test
-test: pattern='<unit>'
+test: pattern=<unit>
 test: build_contracts install
-	@bun test --test-name-pattern=${pattern}
+	@bun test --test-name-pattern="${pattern}"
 
 .PHONY: watch
-watch: pattern='<unit>'
+watch: pattern=<unit>
 watch: build_contracts install
-	@bun --watch test --test-name-pattern=${pattern}
+	@bun --watch test --test-name-pattern="${pattern}"
 
 .PHONY: coverage
-coverage: pattern='<unit>'
+coverage: pattern=<unit>
 coverage: build_contracts install
-	@bun test --coverage --test-name-pattern=${pattern}
+	@bun test --coverage --test-name-pattern="${pattern}"
+
+.PHONY: coverage_ci
+coverage_ci: pattern=<unit>
+coverage_ci: build_contracts install
+	@bun test \
+		--coverage \
+		--coverage-reporter=lcov \
+		--test-name-pattern="${pattern}" && \
+		mv "${CUSTOMER_ROOT_DIR}coverage/lcov.info" \
+		"${CUSTOMER_ROOT_DIR}coverage/lcov-${pattern}.info"

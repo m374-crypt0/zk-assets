@@ -4,3 +4,13 @@ component_management:
       name: contracts
       paths:
         - contracts
+
+    - component_id: customer
+      name: customer
+      paths:
+        - customer
+
+    - component_id: issuer
+      name: issuer
+      paths:
+        - issuer
