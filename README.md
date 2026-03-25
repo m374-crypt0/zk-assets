@@ -8,6 +8,8 @@
 
 [![CI - contracts](https://github.com/m374-crypt0/zk-assets/actions/workflows/ci-contracts.yaml/badge.svg)](https://github.com/m374-crypt0/zk-assets/actions/workflows/ci-contracts.yaml)
 
+[![Slither no High Vulnerabilities](https://github.com/m374-crypt0/zk-assets/actions/workflows/slither_no_high_vulnerability.yaml/badge.svg)](https://github.com/m374-crypt0/zk-assets/actions/workflows/slither_no_high_vulnerability.yaml)
+
 [![CI - customer](https://github.com/m374-crypt0/zk-assets/actions/workflows/ci-customer.yaml/badge.svg)](https://github.com/m374-crypt0/zk-assets/actions/workflows/ci-customer.yaml)
 
 [![CI - issuer](https://github.com/m374-crypt0/zk-assets/actions/workflows/ci-issuer.yaml/badge.svg)](https://github.com/m374-crypt0/zk-assets/actions/workflows/ci-issuer.yaml)

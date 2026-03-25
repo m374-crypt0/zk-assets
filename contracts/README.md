@@ -2,6 +2,8 @@
 
 [![CI - contracts](https://github.com/m374-crypt0/zk-assets/actions/workflows/ci-contracts.yaml/badge.svg)](https://github.com/m374-crypt0/zk-assets/actions/workflows/ci-contracts.yaml)
 
+[![Slither no High Vulnerabilities](https://github.com/m374-crypt0/zk-assets/actions/workflows/slither_no_high_vulnerability.yaml/badge.svg)](https://github.com/m374-crypt0/zk-assets/actions/workflows/slither_no_high_vulnerability.yaml)
+
 > **contracts** is a Foundry project containing the Solidity smart contracts
 > that store eligibility commitments, revoke them, and verify ZK proofs
 > submitted by customers.
