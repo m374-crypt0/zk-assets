@@ -40,7 +40,7 @@ describe('Proof creation and local verification', () => {
   it(`${should} not be able to create a proof with invalid commitment`, async () => {
     const [privateInputs, publicInputs] = [getTestingPrivateInputs(), await getTestingPublicInputs()]
 
-    publicInputs.request.commitment = '0'
+    publicInputs.request.commitment = '0x00'
 
     expect(async () => await customer.generateProof({
       private_inputs: privateInputs,
@@ -65,7 +65,7 @@ describe('Proof submission to mocked blockchain', () => {
 
     expect(await customer.verifyProofLocally({ proof, publicInputs })).toBeTrue()
 
-    publicInputs.request.commitment = '42'
+    publicInputs.request.commitment = '0x42'
     const onChainProver: OnChainProver = new MockedOnChainProver({ failWith: 'Failed to prove on-chain: invalid commitment' })
 
     expect(async () => customer.verifyProofOnChain({

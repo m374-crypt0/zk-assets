@@ -2,9 +2,8 @@ import customer from "src";
 
 import { randomBytes } from "crypto";
 
-import { createTestClient, defineChain, http, toHex, } from "viem";
+import { createTestClient, http, toHex } from "viem";
 import { getBlock } from "viem/actions";
-import { anvil } from "viem/chains";
 
 import { BN254_FR_MODULUS } from "@aztec/bb.js";
 
