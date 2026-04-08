@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.34;
+pragma solidity 0.8.24;
 
 import { IVerifier } from "./interfaces/IVerifier.sol";
 
@@ -28,8 +28,8 @@ contract Prover {
   }
 
   function prove(bytes calldata zkp_, PublicInputs calldata publicInputs_) external view returns (bool) {
-    require(block.timestamp <= uint256(publicInputs_.validUntil), ValidityExpired());
-    require(store.commitments(uint256(publicInputs_.commitment)), InvalidCommitment());
+    if (block.timestamp > uint256(publicInputs_.validUntil)) revert ValidityExpired();
+    if (!store.commitments(uint256(publicInputs_.commitment))) revert InvalidCommitment();
 
     // NOTE: see ../../circuits/src/main.nr, function main arguments
     bytes32[] memory verifierInputs = new bytes32[](5);
@@ -40,7 +40,7 @@ contract Prover {
     verifierInputs[4] = publicInputs_.commitment;
 
     try verifier.verify(zkp_, verifierInputs) returns (bool result) {
-      require(result, InvalidProof());
+      if (!result) revert InvalidProof();
       return result;
     } catch (bytes memory) {
       revert InvalidProof();

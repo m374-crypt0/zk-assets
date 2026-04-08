@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.34;
+pragma solidity 0.8.24;
 
 import { P as PRIME_FIELD_ORDER } from "@circuits/target/zk_assets_rwa_1_hold_v1_verifier.sol";
 import { IPrimeFieldOrderProvider } from "src/interfaces/IPrimeFieldOrderProvider.sol";

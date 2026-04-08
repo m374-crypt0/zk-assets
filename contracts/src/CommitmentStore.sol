@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.34;
+pragma solidity 0.8.24;
 
 import { IPrimeFieldOrderProvider } from "./interfaces/IPrimeFieldOrderProvider.sol";
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
@@ -20,9 +20,9 @@ contract CommitmentStore is Ownable {
   }
 
   function commit(uint256 commitment_) external onlyOwner {
-    require(commitment_ != 0, InvalidZeroCommitment());
-    require(commitments[commitment_] == false, DuplicateCommitment());
-    require(commitment_ <= primeFieldOrderProvider.P(), CommitmentPrimeFieldOrderOverflow());
+    if (commitment_ == 0) revert InvalidZeroCommitment();
+    if (commitments[commitment_]) revert DuplicateCommitment();
+    if (commitment_ > primeFieldOrderProvider.P()) revert CommitmentPrimeFieldOrderOverflow();
 
     commitments[commitment_] = true;
 

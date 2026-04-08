@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.34;
+pragma solidity 0.8.24;
 
 import { HonkVerifier } from "@circuits/target/zk_assets_rwa_1_hold_v1_verifier.sol";
 import { IVerifier } from "src/interfaces/IVerifier.sol";

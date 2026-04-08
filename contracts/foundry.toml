@@ -2,8 +2,8 @@
 src = "src"
 out = "out"
 libs = ["lib"]
-solc_version = "0.8.34"
-evm_version = "osaka"
+solc_version = "0.8.24"
+evm_version = "paris"
 remappings = [
   "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
   "@circuits/target/=../circuits/target/",
