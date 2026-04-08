@@ -2055,7 +2055,7 @@ abstract contract BaseZKHonkVerifier is IVerifier {
 
         // Row-disabling polynomial: 1 - ∏_{i≥2}(1 - u_i)
         Fr evaluation = Fr.wrap(1);
-        for (uint256 i = 2; i < $LOG_N; i++) {
+        for (uint256 i = 2; i < LOG_N; i++) {
             evaluation = evaluation * (Fr.wrap(1) - tp.sumCheckUChallenges[i]);
         }
 

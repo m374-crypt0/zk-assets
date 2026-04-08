@@ -58,6 +58,16 @@ sepolia_deploy: build test
 		--broadcast \
 		--verify
 
+.PHONY: xrpl_deploy
+xrpl_deploy: build test
+	@cd $(CONTRACTS_ROOT_DIR) \
+		&& forge script script/XRPLDeploy.s.sol \
+		--rpc-url xrpl_evm \
+		--broadcast \
+		--verify \
+		--verifier blockscout \
+		--verifier-url "https://explorer.xrplevm.org/api"
+
 .PHONY: run
 run: script=
 run: run_local_blockchain
