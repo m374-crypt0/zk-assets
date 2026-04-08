@@ -18,10 +18,12 @@ via_ir = false
 [rpc_endpoints]
 sepolia = "${SEPOLIA_URL}"
 mainnet = "${MAINNET_URL}"
+xrpl_evm = "${XRPL_EVM_URL}"
 local = "http://${ANVIL_HOST}:${ANVIL_PORT}"
 
 [etherscan]
 sepolia = { key = "${ETHERSCAN_API_KEY}" }
+xrpl_evm = { key = "no_key", url = "https://explorer.xrplevm.org/api" }
 
 [fmt]
 line_length = 120
