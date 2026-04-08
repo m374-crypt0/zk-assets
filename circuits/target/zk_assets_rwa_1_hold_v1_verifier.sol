@@ -132,7 +132,7 @@ library HonkVerificationKey {
     }
 }
 
-pragma solidity ^0.8.27;
+pragma solidity ^0.8.24;
 
 interface IVerifier {
     function verify(bytes calldata _proof, bytes32[] calldata _publicInputs) external view returns (bool);
@@ -190,7 +190,7 @@ library FrLib {
 
     function invert(Fr value) internal view returns (Fr) {
         uint256 v = Fr.unwrap(value);
-        require(v != 0, Errors.InvertOfZero());
+        if(v == 0) revert Errors.InvertOfZero();
 
         uint256 result;
 
@@ -218,7 +218,7 @@ library FrLib {
     function pow(Fr base, uint256 v) internal view returns (Fr) {
         uint256 b = Fr.unwrap(base);
         // Only works for power of 2
-        require(v > 0 && (v & (v - 1)) == 0, Errors.NotPowerOfTwo());
+        if(!(v > 0 && (v & (v - 1)) == 0)) revert Errors.NotPowerOfTwo();
         uint256 result;
 
         // Call the modexp precompile to invert in the field
@@ -268,7 +268,7 @@ library FrLib {
 
     function from(uint256 value) internal pure returns (Fr) {
         unchecked {
-            require(value < MODULUS, Errors.ValueGeFieldOrder());
+            if(value >= MODULUS) revert Errors.ValueGeFieldOrder();
             return Fr.wrap(value);
         }
     }
@@ -276,7 +276,7 @@ library FrLib {
     function fromBytes32(bytes32 value) internal pure returns (Fr) {
         unchecked {
             uint256 v = uint256(value);
-            require(v < MODULUS, Errors.ValueGeFieldOrder());
+            if(v >= MODULUS) revert Errors.ValueGeFieldOrder();
             return Fr.wrap(v);
         }
     }
@@ -577,7 +577,7 @@ library ZKTranscriptLib {
         round0[0] = bytes32(vkHash);
 
         for (uint256 i = 0; i < publicInputsSize - PAIRING_POINTS_SIZE; i++) {
-            require(uint256(publicInputs[i]) < P, Errors.ValueGeFieldOrder());
+            if(uint256(publicInputs[i]) >= P) revert Errors.ValueGeFieldOrder();
             round0[1 + i] = publicInputs[i];
         }
         for (uint256 i = 0; i < PAIRING_POINTS_SIZE; i++) {
@@ -777,7 +777,7 @@ library ZKTranscriptLib {
         for (uint256 i = 0; i < PAIRING_POINTS_SIZE; i++) {
             uint256 limb = uint256(bytes32(proof[boundary:boundary + FIELD_ELEMENT_SIZE]));
             // lo limbs (even index) < 2^136, hi limbs (odd index) < 2^120
-            require(limb < 2 ** (i % 2 == 0 ? 136 : 120), Errors.ValueGeLimbMax());
+            if(!(limb < 2 ** (i % 2 == 0 ? 136 : 120))) revert Errors.ValueGeLimbMax();
             p.pairingPointObject[i] = FrLib.from(limb);
             boundary += FIELD_ELEMENT_SIZE;
         }
@@ -1657,13 +1657,13 @@ function bytesToFr(bytes calldata proofSection) pure returns (Fr scalar) {
 function bytesToG1Point(bytes calldata proofSection) pure returns (Honk.G1Point memory point) {
     uint256 x = uint256(bytes32(proofSection[0x00:0x20]));
     uint256 y = uint256(bytes32(proofSection[0x20:0x40]));
-    require(x < Q && y < Q, Errors.ValueGeGroupOrder());
+    if(!(x < Q && y < Q)) revert Errors.ValueGeGroupOrder();
 
     // Reject the point at infinity (0,0). EVM precompiles silently treat (0,0)
     // as the identity element, which could zero out commitments.
     // On-curve validation (y² = x³ + 3) is handled by the ecAdd/ecMul precompiles
     // per EIP-196, so we only need to catch this special case here.
-    require((x | y) != 0, Errors.PointAtInfinity());
+    if((x | y) == 0) revert Errors.PointAtInfinity();
 
     point = Honk.G1Point({x: x, y: y});
 }
@@ -1710,7 +1710,7 @@ function convertPairingPointsToG1(Fr[PAIRING_POINTS_SIZE] memory pairingPoints)
     // Reconstructed coordinates must be < Q to prevent malleability.
     // Without this, two different limb encodings could map to the same curve point
     // (via mulmod reduction in on-curve checks) but produce different transcript hashes.
-    require(lhsX < Q && lhsY < Q && rhsX < Q && rhsY < Q, Errors.ValueGeGroupOrder());
+    if(!(lhsX < Q && lhsY < Q && rhsX < Q && rhsY < Q)) revert Errors.ValueGeGroupOrder();
 
     lhs.x = lhsX;
     lhs.y = lhsY;
@@ -1871,7 +1871,7 @@ function ecAdd(Honk.G1Point memory lhs, Honk.G1Point memory rhs) view returns (H
 }
 
 function rejectPointAtInfinity(Honk.G1Point memory point) pure {
-    require((point.x | point.y) != 0, Errors.PointAtInfinity());
+    if((point.x | point.y) == 0) revert Errors.PointAtInfinity();
 }
 
 /**
@@ -1942,19 +1942,7 @@ abstract contract BaseZKHonkVerifier is IVerifier {
     uint256 internal constant SHIFTED_COMMITMENTS_START = 30;
     uint256 internal constant PERMUTATION_ARGUMENT_VALUE_SEPARATOR = 1 << 28;
 
-    uint256 internal immutable $N;
-    uint256 internal immutable $LOG_N;
-    uint256 internal immutable $VK_HASH;
-    uint256 internal immutable $NUM_PUBLIC_INPUTS;
-    uint256 internal immutable $MSMSize;
-
-    constructor(uint256 _N, uint256 _logN, uint256 _vkHash, uint256 _numPublicInputs) {
-        $N = _N;
-        $LOG_N = _logN;
-        $VK_HASH = _vkHash;
-        $NUM_PUBLIC_INPUTS = _numPublicInputs;
-        $MSMSize = NUMBER_UNSHIFTED_ZK + _logN + LIBRA_COMMITMENTS + 2;
-    }
+    uint256 internal constant $MSMSize = NUMBER_UNSHIFTED_ZK + LOG_N + LIBRA_COMMITMENTS + 2;
 
     function verify(bytes calldata proof, bytes32[] calldata publicInputs)
         public
@@ -1962,22 +1950,20 @@ abstract contract BaseZKHonkVerifier is IVerifier {
         override
         returns (bool verified)
     {
-        // Calculate expected proof size based on $LOG_N
-        uint256 expectedProofSize = calculateProofSize($LOG_N);
+        // Calculate expected proof size based on LOG_N
+        uint256 expectedProofSize = calculateProofSize(LOG_N);
 
         // Check the received proof is the expected size where each field element is 32 bytes
-        require(
-            proof.length == expectedProofSize, Errors.ProofLengthWrongWithLogN($LOG_N, proof.length, expectedProofSize)
-        );
+        if(proof.length != expectedProofSize) revert Errors.ProofLengthWrongWithLogN(LOG_N, proof.length, expectedProofSize);
 
         Honk.VerificationKey memory vk = loadVerificationKey();
-        Honk.ZKProof memory p = ZKTranscriptLib.loadProof(proof, $LOG_N);
+        Honk.ZKProof memory p = ZKTranscriptLib.loadProof(proof, LOG_N);
 
-        require(publicInputs.length == vk.publicInputsSize - PAIRING_POINTS_SIZE, Errors.PublicInputsLengthWrong());
+        if(publicInputs.length != vk.publicInputsSize - PAIRING_POINTS_SIZE) revert Errors.PublicInputsLengthWrong();
 
         // Generate the fiat shamir challenges for the whole protocol
         ZKTranscript memory t =
-            ZKTranscriptLib.generateTranscript(p, publicInputs, $VK_HASH, $NUM_PUBLIC_INPUTS, $LOG_N);
+            ZKTranscriptLib.generateTranscript(p, publicInputs, VK_HASH, NUMBER_OF_PUBLIC_INPUTS, LOG_N);
 
         // Derive public input delta
         t.relationParameters.publicInputsDelta = computePublicInputDelta(
@@ -1989,8 +1975,8 @@ abstract contract BaseZKHonkVerifier is IVerifier {
         );
 
         // Sumcheck
-        require(verifySumcheck(p, t), Errors.SumcheckFailed());
-        require(verifyShplemini(p, vk, t), Errors.ShpleminiFailed());
+        if(!verifySumcheck(p, t)) revert Errors.SumcheckFailed();
+        if(!verifyShplemini(p, vk, t)) revert Errors.ShpleminiFailed();
 
         verified = true;
     }
@@ -2009,7 +1995,7 @@ abstract contract BaseZKHonkVerifier is IVerifier {
         Fr denominatorAcc = gamma - (beta * FrLib.from(offset + 1));
 
         {
-            for (uint256 i = 0; i < $NUM_PUBLIC_INPUTS - PAIRING_POINTS_SIZE; i++) {
+            for (uint256 i = 0; i < NUMBER_OF_PUBLIC_INPUTS - PAIRING_POINTS_SIZE; i++) {
                 Fr pubInput = FrLib.fromBytes32(publicInputs[i]);
 
                 numerator = numerator * (numeratorAcc + pubInput);
@@ -2039,10 +2025,10 @@ abstract contract BaseZKHonkVerifier is IVerifier {
         Fr powPartialEvaluation = Fr.wrap(1);
 
         // We perform sumcheck reductions over log n rounds ( the multivariate degree )
-        for (uint256 round; round < $LOG_N; ++round) {
+        for (uint256 round; round < LOG_N; ++round) {
             Fr[ZK_BATCHED_RELATION_PARTIAL_LENGTH] memory roundUnivariate = proof.sumcheckUnivariates[round];
             Fr totalSum = roundUnivariate[0] + roundUnivariate[1];
-            require(totalSum == roundTargetSum, Errors.SumcheckFailed());
+            if(totalSum != roundTargetSum) revert Errors.SumcheckFailed();
 
             Fr roundChallenge = tp.sumCheckUChallenges[round];
 
@@ -2064,7 +2050,7 @@ abstract contract BaseZKHonkVerifier is IVerifier {
         );
 
         Fr evaluation = Fr.wrap(1);
-        for (uint256 i = 2; i < $LOG_N; i++) {
+        for (uint256 i = 2; i < LOG_N; i++) {
             evaluation = evaluation * tp.sumCheckUChallenges[i];
         }
 
@@ -2121,7 +2107,7 @@ abstract contract BaseZKHonkVerifier is IVerifier {
         CommitmentSchemeLib.ShpleminiIntermediates memory mem; // stack
 
         // - Compute vector (r, r², ... , r²⁽ⁿ⁻¹⁾), where n = log_circuit_size
-        Fr[] memory powers_of_evaluation_challenge = CommitmentSchemeLib.computeSquares(tp.geminiR, $LOG_N);
+        Fr[] memory powers_of_evaluation_challenge = CommitmentSchemeLib.computeSquares(tp.geminiR, LOG_N);
         // Arrays hold values that will be linearly combined for the gemini and shplonk batch openings
         Fr[] memory scalars = new Fr[]($MSMSize);
         Honk.G1Point[] memory commitments = new Honk.G1Point[]($MSMSize);
@@ -2259,13 +2245,13 @@ abstract contract BaseZKHonkVerifier is IVerifier {
          */
 
         // Add contributions from A₀(r) and A₀(-r) to constant_term_accumulator:
-        // Compute the evaluations Aₗ(r^{2ˡ}) for l = 0, ..., $LOG_N - 1
+        // Compute the evaluations Aₗ(r^{2ˡ}) for l = 0, ..., LOG_N - 1
         Fr[] memory foldPosEvaluations = CommitmentSchemeLib.computeFoldPosEvaluations(
             tp.sumCheckUChallenges,
             mem.batchedEvaluation,
             proof.geminiAEvaluations,
             powers_of_evaluation_challenge,
-            $LOG_N
+            LOG_N
         );
 
         mem.constantTermAccumulator = foldPosEvaluations[0] * mem.posInvertedDenominator;
@@ -2277,8 +2263,8 @@ abstract contract BaseZKHonkVerifier is IVerifier {
 
         // Compute Shplonk constant term contributions from Aₗ(± r^{2ˡ}) for l = 1, ..., m-1;
         // Compute scalar multipliers for each fold commitment
-        for (uint256 i = 0; i < $LOG_N - 1; ++i) {
-            bool dummy_round = i >= ($LOG_N - 1);
+        for (uint256 i = 0; i < LOG_N - 1; ++i) {
+            bool dummy_round = i >= (LOG_N - 1);
 
             if (!dummy_round) {
                 // Update inverted denominators
@@ -2302,7 +2288,7 @@ abstract contract BaseZKHonkVerifier is IVerifier {
             commitments[boundary + i] = proof.geminiFoldComms[i];
         }
 
-        boundary += $LOG_N - 1;
+        boundary += LOG_N - 1;
 
         // Finalize the batch opening claim
         mem.denominators[0] = Fr.wrap(1).div(tp.shplonkZ - tp.geminiR);
@@ -2328,10 +2314,8 @@ abstract contract BaseZKHonkVerifier is IVerifier {
         commitments[boundary] = Honk.G1Point({x: 1, y: 2});
         scalars[boundary++] = mem.constantTermAccumulator;
 
-        require(
-            checkEvalsConsistency(proof.libraPolyEvals, tp.geminiR, tp.sumCheckUChallenges, proof.libraEvaluation),
-            Errors.ConsistencyCheckFailed()
-        );
+        if(!checkEvalsConsistency(proof.libraPolyEvals, tp.geminiR, tp.sumCheckUChallenges, proof.libraEvaluation))
+          revert Errors.ConsistencyCheckFailed();
 
         Honk.G1Point memory quotient_commitment = proof.kzgQuotient;
 
@@ -2368,11 +2352,11 @@ abstract contract BaseZKHonkVerifier is IVerifier {
     ) internal view returns (bool check) {
         Fr one = Fr.wrap(1);
         Fr vanishingPolyEval = geminiR.pow(SUBGROUP_SIZE) - one;
-        require(vanishingPolyEval != Fr.wrap(0), Errors.GeminiChallengeInSubgroup());
+        if(vanishingPolyEval == Fr.wrap(0)) revert Errors.GeminiChallengeInSubgroup();
 
         SmallSubgroupIpaIntermediates memory mem;
         mem.challengePolyLagrange[0] = one;
-        for (uint256 round = 0; round < $LOG_N; round++) {
+        for (uint256 round = 0; round < LOG_N; round++) {
             uint256 currIdx = 1 + LIBRA_UNIVARIATES_LENGTH * round;
             mem.challengePolyLagrange[currIdx] = one;
             for (uint256 idx = currIdx + 1; idx < currIdx + LIBRA_UNIVARIATES_LENGTH; idx++) {
@@ -2441,7 +2425,7 @@ abstract contract BaseZKHonkVerifier is IVerifier {
             mstore(add(result, 0x20), mload(add(free, 0x20)))
         }
 
-        require(success, Errors.ShpleminiFailed());
+        if(!success) revert Errors.ShpleminiFailed();
     }
 
     // Calculate proof size based on log_n (matching UltraKeccakZKFlavor formula)
@@ -2472,7 +2456,7 @@ abstract contract BaseZKHonkVerifier is IVerifier {
     function loadVerificationKey() internal pure virtual returns (Honk.VerificationKey memory);
 }
 
-contract HonkVerifier is BaseZKHonkVerifier(N, LOG_N, VK_HASH, NUMBER_OF_PUBLIC_INPUTS) {
+contract HonkVerifier is BaseZKHonkVerifier {
     // NOTE: exclude this library from coverage reports
     function test() internal pure override {}
 

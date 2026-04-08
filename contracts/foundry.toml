@@ -10,9 +10,9 @@ remappings = [
 ]
 gas_reports = []
 optimizer = true
-# NOTE: 112 precisely is the max value that allow UltraHonk Verifier not to
+# NOTE: 129 precisely is the max value that allow UltraHonk Verifier not to
 # exceed allowed contract bytecode sizer (EIP-170)
-optimizer_runs = 112
+optimizer_runs = 129
 via_ir = false
 
 [rpc_endpoints]
