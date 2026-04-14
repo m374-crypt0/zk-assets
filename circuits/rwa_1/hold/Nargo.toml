@@ -8,4 +8,4 @@ entry = "src/main.nr"
 license = "MIT"
 
 [dependencies]
-poseidon = { tag = "v0.2.6", git = "https://github.com/noir-lang/poseidon" }
+poseidon = { tag = "v0.3.0", git = "https://github.com/noir-lang/poseidon" }
