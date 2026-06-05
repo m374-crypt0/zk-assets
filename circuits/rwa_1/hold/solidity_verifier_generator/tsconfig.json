@@ -7,8 +7,15 @@
     "target": "ESNext",
     "module": "Preserve",
     "moduleDetection": "force",
-    "baseUrl": "../../..",
     "jsx": "react-jsx",
+    "types": [
+      "bun"
+    ],
+    "paths": {
+      "target/*": [
+        "../../../target/*"
+      ]
+    },
     "allowJs": true,
     // Bundler mode
     "moduleResolution": "bundler",

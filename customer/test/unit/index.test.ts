@@ -1,5 +1,5 @@
 
-import customer from "src";
+import customer from "src/index";
 
 import { type OnChainProver } from "src/blockchain/types/onChainProver";
 

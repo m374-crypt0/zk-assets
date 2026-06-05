@@ -1,4 +1,4 @@
-import customer from "src";
+import customer from "src/index";
 
 import { randomBytes } from "crypto";
 

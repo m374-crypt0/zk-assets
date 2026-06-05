@@ -1,4 +1,4 @@
-import customer from "src";
+import customer from "src/index";
 
 import type { PolicyInputs, PrivateInputs, PublicInputs } from "src/types";
 
@@ -9,9 +9,9 @@ import { toHex } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 
 import {
+  buildRecordCompliancyBodyFromInputs,
   createCustomerSecret,
   forwardOnChainTimestamp,
-  buildRecordCompliancyBodyFromInputs,
   getTestingCustomerId,
   getTestingPolicy,
   getValidProofForTesting,

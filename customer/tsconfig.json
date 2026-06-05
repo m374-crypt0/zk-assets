@@ -7,11 +7,16 @@
     "target": "ESNext",
     "module": "Preserve",
     "moduleDetection": "force",
-    "baseUrl": ".",
     "rootDirs": [],
     "paths": {
       "contracts/*": [
         "../contracts/*"
+      ],
+      "src/*": [
+        "../customer/src/*"
+      ],
+      "test/*": [
+        "../customer/test/*"
       ],
       "issuer/*": [
         "../issuer/*"
@@ -21,6 +26,9 @@
       ]
     },
     "jsx": "react-jsx",
+    "types": [
+      "bun"
+    ],
     "allowJs": true,
     // Bundler mode
     "moduleResolution": "bundler",

@@ -5,8 +5,8 @@ import { poseidon2HashAsync } from "@zkpassport/poseidon2"
 import { cpus } from "node:os"
 import { toHex } from "viem"
 
-import { type OnChainProver, type ProverInputs } from "./blockchain/types/onChainProver"
-import type { CommitmentInputs, Inputs, PublicInputs } from "./types"
+import { type OnChainProver, type ProverInputs } from "src/blockchain/types/onChainProver"
+import type { CommitmentInputs, Inputs, PublicInputs } from "src/types"
 
 import circuit from "circuits/target/zk_assets_rwa_1_hold_v1.json"
 
