@@ -10,6 +10,6 @@
     "typescript": "^6.0.3"
   },
   "dependencies": {
-    "@aztec/bb.js": "4.3.1"
+    "@aztec/bb.js": "6.0.0-nightly.20260605"
   }
 }
